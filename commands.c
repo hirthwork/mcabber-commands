@@ -17,18 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/wait.h>
-#include <glib/gstdio.h>
 
 #include <mcabber/modules.h>
 #include <mcabber/commands.h>
-#include <mcabber/settings.h>
 #include <mcabber/compl.h>
 #include <mcabber/hooks.h>
-#include <mcabber/utils.h>
 #include <mcabber/logprint.h>
 
 struct custom_command{
@@ -48,7 +43,7 @@ static void handle_command(char* args, gpointer data)
     struct custom_command* command = (struct custom_command*)data;
     gchar* cmd = g_strdup_printf(command->command, args);
     scr_log_print(LPRINT_LOGNORM, "executing: '%s'", cmd);
-    system(cmd);
+    g_spawn_command_line_async(cmd, NULL);
     g_free(cmd);
 }
 
