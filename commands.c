@@ -204,6 +204,7 @@ static guint parse_message(const gchar *hookname, hk_arg_t *args,
                 g_regex_match(command->input_regex, message, 0, &match_info);
                 while (g_match_info_matches(match_info)) {
                     word = g_match_info_fetch(match_info, 0);
+                    compl_del_category_word(command->completion_id, word);
                     compl_add_unordered_category_word(command->completion_id,
                         word);
                     g_free(word);
