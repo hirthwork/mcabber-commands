@@ -34,9 +34,9 @@ struct custom_command{
     guint completion_id;
 };
 
-GSList* custom_commands;
-guint msg_in_hid;
-guint custom_commands_compl_categ;
+static GSList* custom_commands;
+static guint msg_in_hid;
+static guint custom_commands_compl_categ;
 
 static void handle_command(char* args, gpointer data)
 {
