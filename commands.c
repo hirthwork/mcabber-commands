@@ -124,12 +124,12 @@ static void add_custom_command(char* args)
         G_REGEX_OPTIMIZE|G_REGEX_ANCHORED, G_REGEX_MATCH_ANCHORED, NULL);
     command->input_regex = g_regex_new(input_regex, G_REGEX_OPTIMIZE, 0, NULL);
     command->command = g_strdup(input_regex + strlen(input_regex) + 1);
-    command->completion_id = compl_new_category();
+    command->completion_id = compl_new_category(0x30);
     // TODO: pass some meaningful help string
     cmd_add(command->name, "", command->completion_id, 0,
         (void (*)(char*))handle_command, command);
     custom_commands = g_slist_prepend(custom_commands, command);
-    compl_add_unordered_category_word(custom_commands_compl_categ, name);
+    compl_add_category_word(custom_commands_compl_categ, name);
 }
 
 static void list_custom_commands(char* args)
@@ -205,7 +205,7 @@ static guint parse_message(const gchar *hookname, hk_arg_t *args,
                 while (g_match_info_matches(match_info)) {
                     word = g_match_info_fetch(match_info, 0);
                     compl_del_category_word(command->completion_id, word);
-                    compl_add_unordered_category_word(command->completion_id,
+                    compl_add_category_word(command->completion_id,
                         word);
                     g_free(word);
                     g_match_info_next(match_info, NULL);
@@ -222,7 +222,7 @@ static void commands_init()
     custom_commands = NULL;
     msg_in_hid = hk_add_handler(parse_message, HOOK_PRE_MESSAGE_IN,
         G_PRIORITY_DEFAULT_IDLE, NULL);
-    custom_commands_compl_categ = compl_new_category();
+    custom_commands_compl_categ = compl_new_category(0x30);
     cmd_add("add_custom_command", "Add custom command", 0, 0,
         add_custom_command, NULL);
     cmd_add("del_custom_command", "Delete custom command",
@@ -231,6 +231,7 @@ static void commands_init()
         list_custom_commands, NULL);
     cmd_add("show_custom_command", "Print custom command information",
         custom_commands_compl_categ, 0, show_custom_command, NULL);
+    cmd_set_safe("add_custom_command", TRUE);
 }
 
 static void commands_uninit()
@@ -248,7 +249,7 @@ static void commands_uninit()
 module_info_t info_commands = {
         .branch         = MCABBER_BRANCH,
         .api            = MCABBER_API_VERSION,
-        .version        = "0.01",
+        .version        = "0.05",
         .description    = "custom commands plugin",
         .requires       = NULL,
         .init           = commands_init,
