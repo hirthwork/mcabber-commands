@@ -47,14 +47,6 @@ static void handle_command(char* args, gpointer data)
     g_free(cmd);
 }
 
-static void delete_compl_categ(guint categ)
-{
-    guint dynlist;
-    GSList* list = compl_get_category_list(categ, &dynlist);
-    g_slist_free_full(list, g_free);
-    compl_del_category(categ);
-}
-
 static void delete_custom_command(gpointer data)
 {
     struct custom_command* command = (struct custom_command*)data;
@@ -63,7 +55,7 @@ static void delete_custom_command(gpointer data)
     g_regex_unref(command->buddy_regex);
     g_regex_unref(command->input_regex);
     g_free(command->command);
-    delete_compl_categ(command->completion_id);
+    compl_del_category(command->completion_id);
     g_free(data);
 }
 
@@ -242,7 +234,7 @@ static void commands_uninit()
     cmd_del("del_custom_command");
     cmd_del("list_custom_commands");
     cmd_del("show_custom_command");
-    delete_compl_categ(custom_commands_compl_categ);
+    compl_del_category(custom_commands_compl_categ);
 }
 
 /* Module description */
